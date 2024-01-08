@@ -107,7 +107,7 @@ class SomOvInstallations(osv.osv_memory):
             postal_code=installation.cil.dp,
             province=installation.cil.id_provincia.name,
             coordinates=self._format_coordinates(installation),
-            technology=installation.tecnologia,
+            technology=installation.subgrup,
             cil=installation.cil.name,
             rated_power=installation.potencia_nominal,
             type=installation.tipo,

@@ -131,7 +131,7 @@ class SomInstallationsTests(testing.OOTestCase):
                 province='Girona',
                 coordinates = '41.54670,0.80284',
                 ministry_code = 'RE-00001',
-                technology = False,
+                technology = 'b11',
                 cil='ES1234000000000001JK1F002',
                 rated_power=801.0,
                 type = 'IT-00001',
