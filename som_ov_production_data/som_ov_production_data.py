@@ -132,7 +132,7 @@ class SomOvProductionData(osv.osv_memory):
             '''
                 WITH filtered_data AS (
                     SELECT
-                        u"timestamp" AT TIME ZONE 'UTC' AS "timestamp",
+                        "timestamp" AT TIME ZONE 'UTC' AS "timestamp",
                         ae,
                         maturity,
                         type_measure,
@@ -167,7 +167,7 @@ class SomOvProductionData(osv.osv_memory):
                         COALESCE(fd.ae, NULL) AS ae,
                         COALESCE(fd.maturity, fd2.maturity) AS maturity,
                         COALESCE(fd.type_measure, fd2.type_measure) AS type_measure,
-                        COALESCE(fd.version, fd2.version) AS version
+                        COALESCE(fd.version, NULL) AS version
                     FROM
                         filtered_data fd
                     FULL JOIN
