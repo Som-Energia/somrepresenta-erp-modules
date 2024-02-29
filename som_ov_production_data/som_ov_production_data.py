@@ -135,7 +135,8 @@ class SomOvProductionData(osv.osv_memory):
                         u"timestamp" AT TIME ZONE 'UTC' AS "timestamp",
                         ae,
                         maturity,
-                        type_measure
+                        type_measure,
+                        version
                     FROM
                         giscere_mhcil
                     WHERE
@@ -147,7 +148,8 @@ class SomOvProductionData(osv.osv_memory):
                         generate_series AS "timestamp",
                         NULL AS ae,
                         NULL AS maturity,
-                        NULL AS type_measure
+                        NULL AS type_measure,
+                        NULL AS version
                     FROM
                         generate_series(
                             %(first_timestamp_utc)s,
@@ -164,7 +166,8 @@ class SomOvProductionData(osv.osv_memory):
                         COALESCE(fd."timestamp", fd2."timestamp") AS "timestamp",
                         COALESCE(fd.ae, NULL) AS ae,
                         COALESCE(fd.maturity, fd2.maturity) AS maturity,
-                        COALESCE(fd.type_measure, fd2.type_measure) AS type_measure
+                        COALESCE(fd.type_measure, fd2.type_measure) AS type_measure,
+                        COALESCE(fd.version, fd2.version) AS version
                     FROM
                         filtered_data fd
                     FULL JOIN
@@ -179,10 +182,6 @@ class SomOvProductionData(osv.osv_memory):
                             WHEN maturity = 'H3' THEN 3
                             WHEN maturity = 'H2' THEN 4
                             ELSE 5
-                        END + CASE
-                            WHEN type_measure in ('R', 'L') THEN 0
-                            WHEN type_measure in ('E', 'M') THEN 10
-                            ELSE 20 -- NULL or unexpected
                         END AS ranking
                     FROM
                         joined_data
@@ -192,7 +191,7 @@ class SomOvProductionData(osv.osv_memory):
                         *
                     FROM
                         ranked_data
-                    ORDER BY "timestamp" ASC, ranking ASC
+                    ORDER BY "timestamp" ASC, ranking ASC, version DESC
                 )
                 SELECT
                     JSON_BUILD_OBJECT(
