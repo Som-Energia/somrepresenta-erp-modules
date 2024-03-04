@@ -77,7 +77,7 @@ class SomOvUsers(osv.osv_memory):
             name=partner.name,
             email=partner.address[0].email,
             address=partner.address[0].street,
-            city=partner.address[0].city,
+            city=partner.address[0].city if partner.address[0].city else None,
             zip=partner.address[0].zip,
             state=partner.address[0].state_id.name,
             phones=[
