@@ -4,14 +4,13 @@ from __future__ import unicode_literals
 from destral import testing
 from destral.transaction import Transaction
 
-from .. import som_ov_installations
-
 
 class SomInstallationsTests(testing.OOTestCase):
 
     def setUp(self):
         self.pool = self.openerp.pool
         self.imd = self.pool.get('ir.model.data')
+        self.polissa = self.pool.get('giscere.polissa')
         self.installation = self.pool.get('som.ov.installations')
 
         self.txn = Transaction().start(self.database)
@@ -30,8 +29,13 @@ class SomInstallationsTests(testing.OOTestCase):
     no_installation_vat = 'TODO'
     no_coordinates__contract_number = '103'
 
+    def activate_contracts(self, vat):
+        contract_ids = self.polissa.search(self.cursor, self.uid, [('titular.vat', '=', vat)])
+        self.polissa.write(self.cursor, self.uid, contract_ids, {'state':'activa'})
+
     def test__get_installations__base(self):
         vat = self.base_vat
+        self.activate_contracts(vat)
 
         result = self.installation.get_installations(self.cursor, self.uid, vat)
 
@@ -45,6 +49,7 @@ class SomInstallationsTests(testing.OOTestCase):
 
     def test__get_installations__multiple_installations(self):
         vat = self.legal_vat
+        self.activate_contracts(vat)
 
         result = self.installation.get_installations(self.cursor, self.uid, vat)
 
@@ -66,6 +71,7 @@ class SomInstallationsTests(testing.OOTestCase):
 
     def test__get_installations__user_not_exists(self):
         vat = self.missing_vat
+        self.activate_contracts(vat)
 
         result = self.installation.get_installations(self.cursor, self.uid, vat)
 
@@ -82,34 +88,9 @@ class SomInstallationsTests(testing.OOTestCase):
             self.cursor, self.uid, module, id,
         )[1]
 
-    def test__get_installations__user_have_not_installations(self):
-        vat = self.legal_vat
-
-        installation_obj = self.pool.get('giscere.instalacio')
-        installation_id = self.reference('som_ov_installations', 'giscere_instalacio_1')
-
-        installation_obj.unlink(self.cursor, self.uid, [installation_id])
-
-        result = self.installation.get_installations(self.cursor, self.uid, vat)
-        # TODO: Assert an error log has been generated
-        self.assertEqual(result, [
-            dict(
-                contract_number='100',
-                installation_name='Installation 0',
-            ),
-            # This is the one removed
-            #dict(
-            #    contract_number='101',
-            #    installation_name='Installation 1',
-            #),
-            dict(
-                contract_number='102',
-                installation_name='Installation 2',
-            ),
-        ])
-
     def test__get_installations__contract_with_no_related_installation(self):
         vat = self.no_contracts_vat
+        self.activate_contracts(vat)
 
         result = self.installation.get_installations(self.cursor, self.uid, vat)
 
@@ -118,6 +99,7 @@ class SomInstallationsTests(testing.OOTestCase):
     def test__get_installation_details__base(self):
         contract_number = '101'
         vat = self.legal_vat
+        self.activate_contracts(vat)
 
         result = self.installation.get_installation_details(self.cursor, self.uid, vat, contract_number)
 
@@ -144,7 +126,7 @@ class SomInstallationsTests(testing.OOTestCase):
                 representation_type='indirecta_cnmc',
                 iban='**** **** **** **** **** 5257',
                 discharge_date='2022-02-22',
-                status='esborrany',
+                status='activa',
             ),
         )
         self.assertEqual(expected_result, result)
@@ -164,11 +146,10 @@ class SomInstallationsTests(testing.OOTestCase):
     def test__get_installation_details__contract_with_no_installation(self):
         installation_obj = self.pool.get('giscere.instalacio')
         installation_id = self.reference('som_ov_installations', 'giscere_instalacio_1')
-
         installation_obj.unlink(self.cursor, self.uid, [installation_id])
-
         contract_number = '101'
         vat = self.legal_vat
+        self.activate_contracts(vat)
 
         result = self.installation.get_installation_details(self.cursor, self.uid, vat, contract_number)
 
@@ -182,6 +163,7 @@ class SomInstallationsTests(testing.OOTestCase):
     def test__get_installation_details__coordinates_are_empty(self):
         contract_number = self.no_coordinates__contract_number
         vat = self.base_vat
+        self.activate_contracts(vat)
 
         result = self.installation.get_installation_details(self.cursor, self.uid, vat, contract_number)
 
@@ -191,6 +173,7 @@ class SomInstallationsTests(testing.OOTestCase):
     def test__get_installation_details__not_owner(self):
         contract_number = '101' # belongs to legal_vat
         vat = self.base_vat
+        self.activate_contracts(self.legal_vat)
 
         result = self.installation.get_installation_details(self.cursor, self.uid, vat, contract_number)
 

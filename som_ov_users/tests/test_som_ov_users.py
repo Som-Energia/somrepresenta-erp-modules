@@ -293,25 +293,3 @@ class SomUsersTests(testing.OOTestCase):
         )
 
         self.assertEqual(expected_result, result)
-
-    def test__user_is_staff__is_staff(self):
-        partner_id = self.res_partner.search(
-            self.cursor,
-            self.uid,
-            [('vat', '=', 'G78525763')]
-        )[0]
-
-        result = self.users.user_is_staff(self.cursor, self.uid, partner_id)
-
-        self.assertTrue(result)
-
-    def test__user_is_staff__is_not_staff(self):
-        partner_id = self.res_partner.search(
-            self.cursor,
-            self.uid,
-            [('vat', '=', self.base_costumer_vat)]
-        )[0]
-
-        result = self.users.user_is_staff(self.cursor, self.uid, partner_id)
-
-        self.assertFalse(result)

@@ -67,6 +67,7 @@ class SomOvInstallations(osv.osv_memory):
         polissa_obj = self.pool.get('giscere.polissa')
         contract_search_params = [
            ('name','=', contract_number),
+           ('state', '=', 'activa'),
         ]
         contract_id = polissa_obj.search(cursor, uid, contract_search_params)
         if not contract_id:

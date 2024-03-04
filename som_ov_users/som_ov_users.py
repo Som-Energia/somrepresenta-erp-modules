@@ -94,7 +94,6 @@ class SomOvUsers(osv.osv_memory):
         expected_exceptions=(NoSuchUser, NoDocumentVersions)
     )
     def sign_document(self, cursor, uid, username, document):
-        document_type_obj = self.pool.get('som.ov.signed.document.type')
         document_version_obj = self.pool.get('som.ov.signed.document.type.version')
         signed_document_obj = self.pool.get('som.ov.signed.document')
 
