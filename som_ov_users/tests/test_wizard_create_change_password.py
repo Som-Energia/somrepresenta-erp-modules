@@ -22,8 +22,8 @@ class WizardCreateChangePasswordTests(testing.OOTestCase):
     def tearDown(self):
         self.txn.stop()
 
-    @mock.patch("som_ov_users.wizard.wizard_create_change_password.WizardCreateChangePassword.save_privisioning_data")
-    def test__action_create_change_password__OK(self, mock_save_privisioning_data):
+    @mock.patch("som_ov_users.wizard.wizard_create_change_password.WizardCreateChangePassword.save_provisioning_data")
+    def test__action_create_change_password__OK(self, mock_save_provisioning_data):
         partner_id = self.res_partner.search(
             self.cursor,
             self.uid,
@@ -33,7 +33,7 @@ class WizardCreateChangePasswordTests(testing.OOTestCase):
         context = {'active_ids': partner_id}
         wiz_id = self.wiz_o.create(self.cursor, self.uid, {}, context=context)
 
-        mock_save_privisioning_data.return_value = True
+        mock_save_provisioning_data.return_value = True
 
         self.wiz_o.action_create_change_password(self.cursor, self.uid, [wiz_id], context=context)
 
@@ -43,8 +43,8 @@ class WizardCreateChangePasswordTests(testing.OOTestCase):
         self.assertEqual(wiz['info'], 'Contrasenyes generades')
 
     @mock.patch("som_ov_users.wizard.wizard_create_change_password.WizardCreateChangePassword.send_password_email")
-    @mock.patch("som_ov_users.wizard.wizard_create_change_password.WizardCreateChangePassword.save_privisioning_data")
-    def test__action_create_change_password__KO_cannot_save_privisioning_data(self, mock_save_privisioning_data, mock_send_password_email):
+    @mock.patch("som_ov_users.wizard.wizard_create_change_password.WizardCreateChangePassword.save_provisioning_data")
+    def test__action_create_change_password__KO_cannot_save_provisioning_data(self, mock_save_provisioning_data, mock_send_password_email):
         partner_id = self.res_partner.search(
             self.cursor,
             self.uid,
@@ -54,7 +54,7 @@ class WizardCreateChangePasswordTests(testing.OOTestCase):
         context = {'active_ids': partner_id}
         wiz_id = self.wiz_o.create(self.cursor, self.uid, {}, context=context)
 
-        mock_save_privisioning_data.return_value = False
+        mock_save_provisioning_data.return_value = False
 
         self.wiz_o.action_create_change_password(self.cursor, self.uid, [wiz_id], context=context)
 
@@ -71,8 +71,8 @@ class WizardCreateChangePasswordTests(testing.OOTestCase):
 
 
     @mock.patch("som_ov_users.wizard.wizard_create_change_password.WizardCreateChangePassword.send_password_email")
-    @mock.patch("som_ov_users.wizard.wizard_create_change_password.WizardCreateChangePassword.save_privisioning_data")
-    def test__action_create_change_password__KO_cannot_send_password_email(self, mock_save_privisioning_data, mock_send_password_email):
+    @mock.patch("som_ov_users.wizard.wizard_create_change_password.WizardCreateChangePassword.save_provisioning_data")
+    def test__action_create_change_password__KO_cannot_send_password_email(self, mock_save_provisioning_data, mock_send_password_email):
         partner_id = self.res_partner.search(
             self.cursor,
             self.uid,
@@ -82,7 +82,7 @@ class WizardCreateChangePasswordTests(testing.OOTestCase):
         context = {'active_ids': partner_id}
         wiz_id = self.wiz_o.create(self.cursor, self.uid, {}, context=context)
 
-        mock_save_privisioning_data.return_value = True
+        mock_save_provisioning_data.return_value = True
         
         def send_password_email(cursor, uid, partner_id):
             raise FailSendEmail('Error text')
@@ -100,8 +100,8 @@ class WizardCreateChangePasswordTests(testing.OOTestCase):
             "Error al generar/enviar l'email")
         )
 
-    @mock.patch("som_ov_users.wizard.wizard_create_change_password.WizardCreateChangePassword.save_privisioning_data")
-    def test__action_create_change_password__multiple_partners__OK(self, mock_save_privisioning_data):
+    @mock.patch("som_ov_users.wizard.wizard_create_change_password.WizardCreateChangePassword.save_provisioning_data")
+    def test__action_create_change_password__multiple_partners__OK(self, mock_save_provisioning_data):
         partner_ids = self.res_partner.search(
             self.cursor,
             self.uid,
@@ -111,7 +111,7 @@ class WizardCreateChangePasswordTests(testing.OOTestCase):
         context = {'active_ids': partner_ids}
         wiz_id = self.wiz_o.create(self.cursor, self.uid, {}, context=context)
 
-        mock_save_privisioning_data.return_value = True
+        mock_save_provisioning_data.return_value = True
 
         self.wiz_o.action_create_change_password(self.cursor, self.uid, [wiz_id], context=context)
 
@@ -121,8 +121,8 @@ class WizardCreateChangePasswordTests(testing.OOTestCase):
         self.assertEqual(wiz['info'], 'Contrasenyes generades')
 
     @mock.patch("som_ov_users.wizard.wizard_create_change_password.WizardCreateChangePassword.send_password_email")
-    @mock.patch("som_ov_users.wizard.wizard_create_change_password.WizardCreateChangePassword.save_privisioning_data")
-    def test__action_create_change_password__multiple_partners__KO_cannot_save_privisioning_data(self, mock_save_privisioning_data, mock_send_password_email):
+    @mock.patch("som_ov_users.wizard.wizard_create_change_password.WizardCreateChangePassword.save_provisioning_data")
+    def test__action_create_change_password__multiple_partners__KO_cannot_save_provisioning_data(self, mock_save_provisioning_data, mock_send_password_email):
         partner_ids = self.res_partner.search(
             self.cursor,
             self.uid,
@@ -132,7 +132,7 @@ class WizardCreateChangePasswordTests(testing.OOTestCase):
         context = {'active_ids': partner_ids}
         wiz_id = self.wiz_o.create(self.cursor, self.uid, {}, context=context)
 
-        mock_save_privisioning_data.return_value = False
+        mock_save_provisioning_data.return_value = False
 
         self.wiz_o.action_create_change_password(self.cursor, self.uid, [wiz_id], context=context)
 
@@ -146,8 +146,8 @@ class WizardCreateChangePasswordTests(testing.OOTestCase):
         )
 
     @mock.patch("som_ov_users.wizard.wizard_create_change_password.WizardCreateChangePassword.send_password_email")
-    @mock.patch("som_ov_users.wizard.wizard_create_change_password.WizardCreateChangePassword.save_privisioning_data")
-    def test__action_create_change_password__multiple_partners__KO_cannot_save_privisioning_data__even_partner_id(self, mock_save_privisioning_data, mock_send_password_email):
+    @mock.patch("som_ov_users.wizard.wizard_create_change_password.WizardCreateChangePassword.save_provisioning_data")
+    def test__action_create_change_password__multiple_partners__KO_cannot_save_provisioning_data__even_partner_id(self, mock_save_provisioning_data, mock_send_password_email):
         partner_ids = self.res_partner.search(
             self.cursor,
             self.uid,
@@ -157,12 +157,12 @@ class WizardCreateChangePasswordTests(testing.OOTestCase):
         context = {'active_ids': partner_ids}
         wiz_id = self.wiz_o.create(self.cursor, self.uid, {}, context=context)
 
-        def save_privisioning_data(cursor, uid, partner_id, password):
+        def save_provisioning_data(cursor, uid, partner_id, password):
             if partner_id % 2 == 0:
                 return False
             return True            
 
-        mock_save_privisioning_data.side_effect = save_privisioning_data
+        mock_save_provisioning_data.side_effect = save_provisioning_data
 
         self.wiz_o.action_create_change_password(self.cursor, self.uid, [wiz_id], context=context)
 
@@ -176,8 +176,8 @@ class WizardCreateChangePasswordTests(testing.OOTestCase):
         )
 
     @mock.patch("som_ov_users.wizard.wizard_create_change_password.WizardCreateChangePassword.send_password_email")
-    @mock.patch("som_ov_users.wizard.wizard_create_change_password.WizardCreateChangePassword.save_privisioning_data")
-    def test__action_create_change_password__KO_cannot_send_password_email__even_partner_id(self, mock_save_privisioning_data, mock_send_password_email):
+    @mock.patch("som_ov_users.wizard.wizard_create_change_password.WizardCreateChangePassword.save_provisioning_data")
+    def test__action_create_change_password__KO_cannot_send_password_email__even_partner_id(self, mock_save_provisioning_data, mock_send_password_email):
         partner_ids = self.res_partner.search(
             self.cursor,
             self.uid,
@@ -187,7 +187,7 @@ class WizardCreateChangePasswordTests(testing.OOTestCase):
         context = {'active_ids': partner_ids}
         wiz_id = self.wiz_o.create(self.cursor, self.uid, {}, context=context)
 
-        mock_save_privisioning_data.return_value = True
+        mock_save_provisioning_data.return_value = True
         
         def send_password_email(cursor, uid, partner_id):
             if int(partner_id.id) % 2 == 0:
@@ -207,7 +207,7 @@ class WizardCreateChangePasswordTests(testing.OOTestCase):
         )
 
     @mock.patch("tools.config.get")
-    def test__save_privisioning_data__KO_without_api_key(self, mock_config):
+    def test__save_provisioning_data__KO_without_api_key(self, mock_config):
         partner_id = self.res_partner.search(
             self.cursor,
             self.uid,
@@ -218,7 +218,7 @@ class WizardCreateChangePasswordTests(testing.OOTestCase):
 
         mock_config.return_value = False
 
-        result = self.wiz_o.save_privisioning_data(self.cursor, self.uid, partner_id[0], password)
+        result = self.wiz_o.save_provisioning_data(self.cursor, self.uid, partner_id[0], password)
 
         self.assertFalse(result)
 

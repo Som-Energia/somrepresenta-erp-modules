@@ -62,7 +62,7 @@
         <record id="res_partner_not_customer" model="res.partner">
             <field name="name">Distri Name</field>
             <field name="ref">666</field>
-            <field name="vat"></field>
+            <field name="vat">ES55221963K</field>
             <field name="active" eval="True"/>
         </record>
         <record id="res_partner_address_not_customer" model="res.partner.address">

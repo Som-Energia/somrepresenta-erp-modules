@@ -29,26 +29,26 @@ class SomOvUsers(osv.osv_memory):
                 vat=partner.vat,
                 name=partner.name,
                 email=partner.address[0].email,
-                roles=['staff'] if self.partner_is_staff(cursor, uid, partner.id) else ['customer'],
+                roles=['staff'] if self.partner_is_staff(cursor, uid, partner) else ['customer'],
                 username=partner.vat,
             )
         raise NoSuchUser()
 
-    def partner_is_staff(self, cursor, uid, partner_id):
-        address_obj = self.pool.get('res.partner.address')
-        search_params = [
-            ('partner_id','=', partner_id),
-        ]
-        partner_adddress_ids = address_obj.search(cursor, uid, search_params)
-        if partner_adddress_ids:
-            user_obj = self.pool.get('res.users')
-            search_params = [
-                ('address_id','=', partner_adddress_ids[0]),
-            ]
-            user = user_obj.search(cursor, uid, search_params)
-            if user:
-                return True
-        return False
+    def partner_is_staff(self, cursor, uid, partner):
+        user_obj = self.pool.get('res.users')
+        imd_obj = self.pool.get("ir.model.data")
+        staff_category_id = imd_obj.get_object_reference(
+            cursor, uid, "som_ov_users", "res_partner_category_ovrepresenta_staff"
+        )[1]
+        if all(cat.id != staff_category_id for cat in partner.category_id):
+            return False
+
+        if not partner.address: return False
+
+        user = user_obj.search(cursor, uid, [
+            ('address_id','=', partner.address[0].id),
+        ])
+        return bool(user)
 
     def get_customer(self, cursor, uid, username):
         # Get user profile: for now recover customer profile
@@ -72,7 +72,7 @@ class SomOvUsers(osv.osv_memory):
         partner = self.get_customer(cursor, uid, username)
         return dict(
             username=partner.vat,
-            roles=['staff'] if self.partner_is_staff(cursor, uid, partner.id) else ['customer'],
+            roles=['staff'] if self.partner_is_staff(cursor, uid, partner) else ['customer'],
             vat=partner.vat,
             name=partner.name,
             email=partner.address[0].email,

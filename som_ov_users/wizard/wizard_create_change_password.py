@@ -81,7 +81,7 @@ class WizardCreateChangePassword(osv.osv_memory):
             raise FailSendEmail(e.message)
 
 
-    def save_privisioning_data(self, cursor, uid, partner_id, password):
+    def save_provisioning_data(self, cursor, uid, partner_id, password):
         partner_o = self.pool.get("res.partner")
         try:
             partner = partner_o.browse(cursor, uid, partner_id)
@@ -134,7 +134,7 @@ class WizardCreateChangePassword(osv.osv_memory):
         for partner_id in partner_ids:
             partner = partner_o.browse(cursor, uid, partner_id)
             password = self.generatePassword()
-            result = self.save_privisioning_data(cursor, uid, partner_id, password)
+            result = self.save_provisioning_data(cursor, uid, partner_id, password)
             if not result:
                 info = "{} ({})\n".format(str(int(partner_id)),'Error al guardar la contrasenya')
                 error_info.append(info)
