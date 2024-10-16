@@ -42,28 +42,36 @@ class WizardCreateStaffUsersTests(testing.OOTestCase):
 
         wiz = self.wiz_o.read(self.cursor, self.uid, [wiz_id])[0]
         self.assertEqual(wiz['state'], 'done')
-        self.assertEqual(wiz['info'], 'Usuaria staff creada')
+        self.assertEqual(wiz['info'], "La usuària ha estat convertida en gestora de l'Oficina Virtual de Representa")
+        final_user = self.res_users.browse(self.cursor, self.uid, user_id)
+        self.assertEqual(final_user.is_staff, True)
 
     def test__action_create_staff_users__res_user_is_already_staff(self):
-        user_id = self.res_users.search(
-            self.cursor,
-            self.uid,
-            [('login', '=', 'matahari')]
-        )[0]
+        imd = self.pool.get('ir.model.data')
+        def reference(module, id):
+            return imd.get_object_reference(
+                self.cursor, self.uid, module, id,
+            )[1]
+        user_id = reference('som_ov_users', 'res_users_already_staff')
+        user = self.res_users.browse(self.cursor, self.uid, user_id)
         irrelevant_context = {}
         wiz_id = self.wiz_o.create(self.cursor, self.uid, {}, context=irrelevant_context)
+        vat = user.address_id.partner_id.vat
         self.wiz_o.write(self.cursor, self.uid, [wiz_id], {
             "user_to_staff": user_id,
-            "email": 'an_email',
-            "vat": 'a_vat_number'
+            "email": user.address_id.email,
+            "vat": vat,
          }, irrelevant_context)
 
         self.wiz_o.action_create_staff_users(self.cursor, self.uid, [wiz_id], context=irrelevant_context)
 
         wiz = self.wiz_o.read(self.cursor, self.uid, [wiz_id])[0]
         self.assertEqual(wiz['state'], 'done')
-        self.assertEqual(wiz['info'], 'Aquesta usuaria ja és staff')
-
+        self.assertEqual(
+            wiz['info'],
+            "La persona ja és gestora de l'Oficina Virtual de Representa. "
+            "Potser el VAT {vat} ja està vinculat amb una altra usuària".format(vat=vat),
+    )
 
     def test__action_create_staff_users__res_user_does_not_exists(self):
         a_non_existing_user_id = 999999999

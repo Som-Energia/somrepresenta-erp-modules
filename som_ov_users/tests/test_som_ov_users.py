@@ -12,7 +12,7 @@ from .. import som_ov_users
 class SomUsersTests(testing.OOTestCase):
 
     base_costumer_vat = 'ES48591264S'
-    base_staff_vat = 'G78525763'
+    base_staff_vat = 'ESV41325689'
 
     def setUp(self):
         self.pool = self.openerp.pool
@@ -62,6 +62,22 @@ class SomUsersTests(testing.OOTestCase):
         )
         self.assertEqual(expected_result, result)
 
+    def test__get_user_login_info__user_exists_is_active_missing_category__not_considered_stafff(self):
+        username = self.base_staff_vat
+        partner_id = self.partner_id_by_vat(username)
+        self.res_partner.write(self.cursor, self.uid, partner_id, {'category_id': [(6, 0, [])]})
+
+        result = self.users.identify_login(self.cursor, self.uid, username)
+
+        expected_result = dict(
+            vat=self.base_staff_vat,
+            name='Hari, Mata',
+            email='matahari@somenergia.coop',
+            roles=['customer'],
+            username=username,
+        )
+        self.assertEqual(expected_result, result)
+
     def test__get_user_login_info__user_exists_and_is_not_active(self):
         res_partner_address_soci_not_active_vat = 'ES14763905K'
 
@@ -98,15 +114,18 @@ class SomUsersTests(testing.OOTestCase):
 
         self.assertEqual(expected_result, result)
 
+    def partner_id_by_vat(self, vat):
+        return self.res_partner.search(
+            self.cursor,
+            self.uid,
+            [('vat', '=', vat)]
+        )
+
     def test__get_profile__without_phone_numbers(self):
         username = self.base_costumer_vat
         # TODO: use reference()
         # get address id
-        partner_id = self.res_partner.search(
-            self.cursor,
-            self.uid,
-            [('vat', '=', self.base_costumer_vat)]
-        )
+        partner_id = self.partner_id_by_vat(username)
         partner = self.res_partner.browse(self.cursor, self.uid, partner_id)[0]
         address_id = partner.address[0].id
 

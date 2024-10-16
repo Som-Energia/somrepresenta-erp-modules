@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- Prefix changed from `som` to `somre` excluding `som_ov_signed_documents` module since
+  logic could be used to different activities, Commercialization, Representation, etc.
+- Add scripts to help with the renaming of semantic ids and module names.
+- Specify in visible strings the word representation to distinguish from commercialization properly
+- New implementation to create and identify the user staff for Representation Virtual Office
+    - Consider existing partners with the specified nif
+    - Consider existing links to address from users
 - Hide invoices emitted beyond a given date
 - Extract liquidation information from invoice line
 - Retrieve production data for a single contract

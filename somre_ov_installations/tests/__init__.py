@@ -1,0 +1,1 @@
+from test_som_installations import *
